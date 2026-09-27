@@ -140,6 +140,19 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
+## Demo Test Accounts (For Hackathon Judges)
+
+EcoCollect comes pre-configured with two ready-to-use demo accounts for live testing:
+
+| Role | Email | Password | Intended Workflow |
+|---|---|---|---|
+| **Citizen** | `citizen@ecocollect.demo` | `Password123!` | Create pickup requests, track status timeline, cancel pending requests |
+| **Admin** | `admin@ecocollect.demo` | `Password123!` | Triage requests table, update pipeline status, view Recharts analytics |
+
+You can also click the **"Use →"** quick-fill buttons directly on the Login page (`/login`) to fill either credential in one click!
+
+---
+
 ## Docker Instructions
 
 ### Build Docker Image

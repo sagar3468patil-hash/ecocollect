@@ -63,9 +63,15 @@ export async function getStatsData() {
  * Priority is calculated by the caller using priorityEngine.js.
  */
 export async function createRequest(payload) {
+  const { data: { session } } = await supabase.auth.getSession()
+  const userId = session?.user?.id ?? payload.user_id ?? null
+  const body = { ...payload }
+  if (userId) {
+    body.user_id = userId
+  }
   return supabase
     .from('waste_requests')
-    .insert(payload)
+    .insert(body)
     .select()
     .single()
 }

@@ -1,16 +1,26 @@
-import { useNavigate } from 'react-router-dom'
-import { Leaf, ArrowRight, Recycle, ClipboardList } from 'lucide-react'
-import { useRole } from '../contexts/RoleContext'
-import { ROLES } from '../data/constants'
+import { useNavigate, Link } from 'react-router-dom'
+import { Leaf, ArrowRight, Recycle, ClipboardList, ShieldCheck } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
 import Button from '../components/ui/Button'
 
 export default function LandingPage() {
-  const { selectRole } = useRole()
+  const { user, profile } = useAuth()
   const navigate = useNavigate()
 
-  function enter(role) {
-    selectRole(role)
-    navigate(role === ROLES.ADMIN ? '/admin/dashboard' : '/citizen/dashboard')
+  function handleCitizenClick() {
+    if (user) {
+      navigate('/citizen/dashboard')
+    } else {
+      navigate('/login')
+    }
+  }
+
+  function handleAdminClick() {
+    if (user && profile?.role === 'admin') {
+      navigate('/admin/dashboard')
+    } else {
+      navigate('/login')
+    }
   }
 
   return (
@@ -21,12 +31,33 @@ export default function LandingPage() {
           <div className="w-7 h-7 rounded-md bg-forest flex items-center justify-center">
             <Leaf size={14} className="text-white" />
           </div>
-          <span className="font-display font-semibold text-ink text-[17px]"
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+          <span
+            className="font-display font-semibold text-ink text-[17px]"
+            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+          >
             EcoCollect
           </span>
         </div>
-        <span className="text-xs text-ink/50 font-sans">Pune Smart Waste Initiative</span>
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:inline text-xs text-ink/50 font-sans">
+            Pune Smart Waste Initiative
+          </span>
+          {user ? (
+            <Link
+              to={profile?.role === 'admin' ? '/admin/dashboard' : '/citizen/dashboard'}
+              className="text-xs font-medium text-forest hover:underline"
+            >
+              My Dashboard →
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="text-xs font-medium text-forest hover:underline"
+            >
+              Sign in
+            </Link>
+          )}
+        </div>
       </header>
 
       {/* Hero */}
@@ -40,7 +71,7 @@ export default function LandingPage() {
             </span>
           </div>
 
-          {/* Headline — Fraunces, specific problem statement */}
+          {/* Headline */}
           <h1
             className="text-5xl sm:text-6xl text-ink leading-[1.08] mb-6"
             style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 600 }}
@@ -63,7 +94,7 @@ export default function LandingPage() {
               id="cta-citizen"
               variant="primary"
               size="lg"
-              onClick={() => enter(ROLES.CITIZEN)}
+              onClick={handleCitizenClick}
               className="w-full sm:w-auto gap-2"
             >
               <ClipboardList size={18} />
@@ -73,40 +104,54 @@ export default function LandingPage() {
               id="cta-admin"
               variant="secondary"
               size="lg"
-              onClick={() => enter(ROLES.ADMIN)}
+              onClick={handleAdminClick}
               className="w-full sm:w-auto gap-2"
             >
-              Admin dashboard
-              <ArrowRight size={16} />
+              <ShieldCheck size={18} />
+              Admin portal
             </Button>
+          </div>
+
+          {/* Trust strip */}
+          <div className="mt-16 pt-8 border-t border-sage-line grid grid-cols-3 gap-4 text-center">
+            <div>
+              <p
+                className="font-display text-2xl text-ink"
+                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              >
+                100%
+              </p>
+              <p className="text-xs text-ink/50 font-sans mt-0.5">Trackable pickups</p>
+            </div>
+            <div>
+              <p
+                className="font-display text-2xl text-ink"
+                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              >
+                &lt; 60s
+              </p>
+              <p className="text-xs text-ink/50 font-sans mt-0.5">To request</p>
+            </div>
+            <div>
+              <p
+                className="font-display text-2xl text-ink"
+                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              >
+                Rule-based
+              </p>
+              <p className="text-xs text-ink/50 font-sans mt-0.5">Automated triage</p>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* Feature strip */}
-      <section className="border-t border-sage-line bg-sage/30">
-        <div className="max-w-3xl mx-auto px-6 py-8 grid sm:grid-cols-3 gap-6">
-          {[
-            {
-              label: 'Submit in 60 seconds',
-              desc: 'Select category, quantity, and address. Done.',
-            },
-            {
-              label: 'Track every step',
-              desc: 'From Submitted → Reviewed → Scheduled → Collected.',
-            },
-            {
-              label: 'Rule-based priority',
-              desc: 'Automatic prioritisation — deterministic, not guesswork.',
-            },
-          ].map((f) => (
-            <div key={f.label}>
-              <p className="font-sans font-medium text-ink text-sm mb-1">{f.label}</p>
-              <p className="font-sans text-xs text-ink/60">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Footer */}
+      <footer className="px-6 py-4 border-t border-sage-line flex items-center justify-between text-xs text-ink/40 font-sans">
+        <span>EcoCollect · Pune Smart Waste Coordination</span>
+        <Link to="/design" className="hover:text-ink transition-colors">
+          Design system
+        </Link>
+      </footer>
     </div>
   )
 }
