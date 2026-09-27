@@ -48,7 +48,7 @@ try {
   const { data, error } = await supabase
     .from('waste_requests')
     .insert({
-      request_code:    'ECO-TEST-001',
+      request_code:    'ECO-TEST-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
       user_name:       '_db_test_user',
       user_email:      'dbtest@ecocollect.internal',
       waste_category:  'Plastic',
